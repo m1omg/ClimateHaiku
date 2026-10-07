@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClimateHaiku · Planetary Climate Lab</title>
+  <meta name="description" content="Tune a rocky planet's mass, water, gases, orbit and carbon cycle, and watch it drift between snowball, habitable, moist greenhouse and runaway states.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>ClimateHaiku</h1>
+        <p>A planetary climate lab. Design a rocky world, then watch its climate drift between states.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="visually-hidden" for="preset-select">Preset world</label>
+      <select id="preset-select" class="select" aria-label="Preset world"></select>
+      <button id="btn-reset" class="btn ghost" type="button" title="Restart the selected preset">Restart</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage card" aria-label="Planet view and time controls">
+      <div class="stage-view">
+        <canvas id="planet" aria-label="Planet and atmosphere"></canvas>
+        <div class="state-badge" aria-live="polite">
+          <span class="state-dot" id="state-dot"></span>
+          <div>
+            <div class="name" id="state-name">Loading...</div>
+            <div class="sub" id="state-sub"></div>
+          </div>
+        </div>
+        <div class="clock" aria-live="off">
+          <span id="clock-time">t = 0 yr</span>
+          <small id="clock-rate">paused</small>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <p class="state-desc" id="state-desc"></p>
+
+      <div class="timebar">
+        <button id="btn-play" class="btn primary" type="button" aria-pressed="false">Pause</button>
+        <div class="rates" id="rate-buttons"></div>
+        <label class="speed-slider">
+          <span class="muted small">Speed</span>
+          <input type="range" id="rate-slider" min="-1" max="9.5" step="0.01" aria-label="Simulated years per second (log scale)">
+          <output id="rate-out" for="rate-slider">1 kyr/s</output>
+        </label>
+      </div>
+      <p class="hint small" id="time-hint"></p>
+    </section>
+
+    <aside class="panel" aria-label="World controls">
+      <div id="controls"></div>
+      <details id="actions-block" open>
+        <summary>Management actions</summary>
+        <div class="action-grid" id="actions"></div>
+        <p class="hint small" style="margin-top:8px">Stopping a sulphate injection, or removing a sunshade, reverses the cooling within a few years. The ocean takes longer to follow.</p>
+      </details>
+    </aside>
+  </main>
+
+  <section class="analysis" aria-label="Diagnostics">
+    <div class="card">
+      <h2>Energy balance</h2>
+      <p class="hint small">Absorbed sunlight (dashed) against the outgoing longwave flux (solid). A climate state is where the two curves cross. Above the red line the atmosphere cannot radiate more.</p>
+      <div class="chart-wrap"><canvas id="chart-balance"></canvas></div>
+      <div class="legend"><span style="--swatch:#fbbf24">Absorbed sunlight</span><span style="--swatch:#60a5fa">Outgoing longwave</span><span style="--swatch:#f87171">Runaway limit</span></div>
+    </div>
+    <div class="card">
+      <h2>History</h2>
+      <p class="hint small">Surface temperature, pressure and ocean inventory over simulated time. The time axis is logarithmic once the run is long.</p>
+      <div class="chart-wrap"><canvas id="chart-history"></canvas></div>
+      <div class="legend" id="history-legend"></div>
+    </div>
+    <div class="card">
+      <h2>How long until it changes?</h2>
+      <p class="hint small">Estimated from the current state. These are the timescales that separate a sudden change from a slow one.</p>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <section class="science" aria-label="Climate states and science notes">
+    <div class="card">
+      <h2>Climate states</h2>
+      <p class="prose">The game classifies the planet every frame. A state is named from the surface temperature, ice cover, liquid water, pressure and whether the outgoing flux has reached its limit. Some states sit next to each other, so a small push can move a planet from one to the next.</p>
+      <div class="catalog" id="catalog" style="margin-top:14px"></div>
+    </div>
+    <div class="card" style="margin-top:var(--gutter, 16px)">
+      <h2>Model and references</h2>
+      <p class="prose">
+        The model is a global-mean energy balance with a gray-atmosphere greenhouse (fitted to Earth, Mars and Venus), an IAPWS water-vapour law, a steam-and-ocean energy budget, an outgoing-flux runaway limit, a carbonate-silicate thermostat, hydrogen escape and Gough (1981) solar brightening. It is a teaching model, not a 3-D climate simulation: values are right to within tens of kelvin, and the states are right in order.
+        Details, equations and calibration are in <code>docs/science.md</code>.
+      </p>
+      <ol class="refs" id="refs"></ol>
+    </div>
+  </section>
+
+  <footer class="footer">
+    ClimateHaiku · no build step · open <code>index.html</code> in a browser · <code>Space</code> pauses, <code>1</code>–<code>5</code> set the rate · time runs at a fixed step, so results do not depend on the refresh rate · tests: <code>node --test tests/climate.test.js</code>
+  </footer>
+
+  <script src="js/climate.js"></script>
+  <script src="js/states.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
